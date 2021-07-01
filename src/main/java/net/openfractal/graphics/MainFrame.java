@@ -37,11 +37,12 @@ public class MainFrame extends MouseAdapter implements GLEventListener {
     private float zoom = -1f;
 
     // MANDELBROT
+    /*
     private final String injectedShader = """
             const vec4 colorPalette = -vec4(0,23,21,0); // Can be randomly generated for more fun!
             const vec4 finalColor = vec4(.0); // Color applied to bounded values
             const int hueModulus = 30;
-        
+
             void main() {
                 float zoom = .2; // Default zoom
                 int recursion = 500, // Default recursion
@@ -52,8 +53,9 @@ public class MainFrame extends MouseAdapter implements GLEventListener {
                 fragColor =  i - 1 == recursion ? finalColor : .6 + .6 * cos( 6.3 *  (float((i - 1) % hueModulus) / float(hueModulus)) + colorPalette); // Deciding the final color
             }
             """;
+     */
 
-    /* JULIA SET
+    // JULIA SET
     private final String injectedShader = """
             const vec4 colorPalette = -vec4(0,23,21,0); // Can be randomly generated for more fun!
             const vec4 finalColor = vec4(.0); // Color applied to bounded values
@@ -68,7 +70,7 @@ public class MainFrame extends MouseAdapter implements GLEventListener {
                 fragColor =  i - 1 == recursion ? finalColor : .6 + .6 * cos( 6.3 *  (float((i - 1) % hueModulus) / float(hueModulus)) + colorPalette); // Deciding the final color
             }
             """;
-     */
+
 
     public MainFrame() {
         //getting the capabilities object of GL2 profile

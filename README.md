@@ -23,10 +23,11 @@ As you maybe know fractals such as the Mandelbrot set are generated using comple
 To represent them inside our glsl shader, we use 2d vectors:
 
 <img src="https://imgur.com/iFtPC7R.png" width="200">
--
+
 ```GLSL
 c = vec2(a, b);
 ```
+
 We also provide a lot of functions for manipulating complex numbers. See 
 [GLSL-Complex-Numbers](https://github.com/Quinn-With-Two-Ns/GLSL-Complex-Numbers).
 
@@ -104,5 +105,5 @@ We will maybe add a java api that will allow you to mess up with the software at
 
 ***
 
-###🏅 Feel free to help on the project as this is pure opensource!
+### 🏅 Feel free to help on the project as this is pure opensource!
 

@@ -86,5 +86,5 @@ We will maybe add a java api that will allow you to mess up with the software at
 
 ***
 
-###🏅 Feel free to help on the project as this is pure opensource!
+### 🏅 Feel free to help on the project as this is pure opensource!
 

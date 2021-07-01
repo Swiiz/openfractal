@@ -1,7 +1,5 @@
 # 🍀 OpenFractal
 
-***
-
 ✨ A fully open-source software to generate entirely customisable fractals!
 
 [![Apache license](https://img.shields.io/badge/License-Apache-blue.svg)](http://www.apache.org/licenses/)

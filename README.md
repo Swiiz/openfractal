@@ -30,28 +30,46 @@ c = vec2(a, b);
 We also provide a lot of functions for manipulating complex numbers. See 
 [GLSL-Complex-Numbers](https://github.com/Quinn-With-Two-Ns/GLSL-Complex-Numbers).
 
-### Example fractal code:  (💥 This might not work in the close future)
+### Examples fractal code:  (💥 This might not work in the close future)
 
 ```GLSL
 /*
+Open-Mandelbrot
 MADE BY SWIIZ FOR OPEN-FRACTAL
 */
 
 const vec4 colorPalette = -vec4(0,23,21,0); // Can be randomly generated for more fun!
-const vec4 finalColor = vec4(.0); // Color applied to bounded values
-const int hueModulus = 30;
-            
-uniform vec2 dims; // Window dimensions  | vec2(width, height)
-            
-out vec4 fragColor; // Output color
-            
+const vec4 finalColor = vec4(.0); // Color applied to points inside the set
+const int hueModulus = 30; // Allow color cycling based on interactions count
+
 void main() {
-    float zoom = 5.; // Default zoom
-    int recursion = 50, // Default recursion
-    i = 0;
-    vec2 c = ((gl_FragCoord.xy / dims.y) - .5 - vec2(0.5*dims.x/dims.y-0.5, 0.)) * zoom, // Mapping the complex plane to the viewport
+    float zoom = .2; // Default zoom
+    int recursion = 500, // Default recursion
+    i = 0; // Iteration count
+    vec2 c = (of_mapToComplex(of_dimensions, gl_FragCoord.xy, of_position)) / of_zoom, // Mapping the complex plane to the viewport
     z = c;
-    for(; i <= recursion && length(z) <= 2. ; i++ ) z = cpx_pow(z, 2.) + c; // Actual iterative thing
+    for(; i <= recursion && cpx_mag(z) <= 2. ; i++ ) z = cpx_pow(z, 2.) + c; // Actual iterative thing
+    fragColor =  i - 1 == recursion ? finalColor : .6 + .6 * cos( 6.3 *  (float((i - 1) % hueModulus) / float(hueModulus)) + colorPalette); // Deciding the final color
+}
+```
+
+```GLSL
+/*
+Open-Julia
+MADE BY SWIIZ FOR OPEN-FRACTAL
+*/
+
+const vec2 c = vec2(0.37, .1); // Complex number that will generate the julia set.
+
+const vec4 colorPalette = -vec4(0,23,21,0); // Can be randomly generated for more fun!
+const vec4 finalColor = vec4(.0); // Color applied to bounded values
+const int hueModulus = 30; // Allow color cycling based on interactions count
+
+void main() {
+    int recursion = 1000, // Default recursion
+    i = 0; // Iteration count
+    vec2 z = (of_mapToComplex(of_dimensions, gl_FragCoord.xy, of_position)) / of_zoom; // Mapping the complex plane to the viewport
+    for(; i <= recursion && cpx_mag(z) <= 2. ; i++ ) z = cpx_pow(z, 2.) + c; // Actual iterative thing
     fragColor =  i - 1 == recursion ? finalColor : .6 + .6 * cos( 6.3 *  (float((i - 1) % hueModulus) / float(hueModulus)) + colorPalette); // Deciding the final color
 }
 ```
@@ -77,10 +95,10 @@ We will maybe add a java api that will allow you to mess up with the software at
 ***
 
 ### ✅ Todo:
+- Create documentation for the new glsl functions and varible.
+- Shader error tracking
 - Loading config file
 - Waiting for changes on the config file
-- Add zoom
-- Add movement
 - Clean code
 - **(Not for now)** *Make the OpenFractal website and client*
 

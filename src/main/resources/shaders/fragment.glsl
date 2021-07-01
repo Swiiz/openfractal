@@ -148,6 +148,21 @@ vec3 hsl2rgb(vec3 hsl) {
 }
 // END OF LIBS
 
+vec2 of_mapToComplex(vec2 dims, vec2 coords, vec2 offset) {
+    return ((coords / dims.y) + offset - vec2(0.5*(dims.x/dims.y + offset.x), .5));
+}
+
+// Variables
+
+uniform vec2 of_dimensions; //vec2(width, height)
+uniform vec2 of_cursorPos;
+uniform vec2 of_cursorPosFromCenter;
+uniform vec2 of_position;
+uniform float of_zoom;
+uniform float of_time;
+
+out vec4 fragColor;
+
 /*
 Real Shader will be injected just below
 */

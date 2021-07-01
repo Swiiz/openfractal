@@ -2,20 +2,15 @@ package net.openfractal.graphics;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.math.FloatUtil;
-import com.jogamp.opengl.math.Matrix4;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import net.openfractal.Main;
 import net.openfractal.Utils;
-import net.openfractal.maths.Matrix2;
-import net.openfractal.maths.Matrix3;
 import net.openfractal.maths.Vector2;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.nio.FloatBuffer;
 
 public class MainFrame extends MouseAdapter implements GLEventListener {
 

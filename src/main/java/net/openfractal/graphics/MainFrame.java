@@ -6,16 +6,20 @@ import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import net.openfractal.Main;
+import net.openfractal.OpenFractal;
 import net.openfractal.Utils;
 import net.openfractal.maths.Vector2;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
 
 public class MainFrame extends MouseAdapter implements GLEventListener {
 
-    private final String vertexShader = Utils.loadFileAsString("/shaders/vertex.glsl"),
-                         fragmentShader = Utils.loadFileAsString("/shaders/fragment.glsl");
+    private final String vertexShader = Utils.loadFileAsString(MainFrame.class.getResourceAsStream("/shaders/vertex.glsl")),
+                         fragmentShader = Utils.loadFileAsString(MainFrame.class.getResourceAsStream("/shaders/fragment.glsl"));
     private final ShaderProgram sp = new ShaderProgram();
 
     private final Frame frame;
@@ -31,40 +35,8 @@ public class MainFrame extends MouseAdapter implements GLEventListener {
     private Vector2 position = new Vector2();
     private float zoom = -1f;
 
-    // MANDELBROT
-    /*
-    private final String injectedShader = """
-            const vec4 colorPalette = -vec4(0,23,21,0); // Can be randomly generated for more fun!
-            const vec4 finalColor = vec4(.0); // Color applied to bounded values
-            const int hueModulus = 30;
-
-            void main() {
-                float zoom = .2; // Default zoom
-                int recursion = 500, // Default recursion
-                        i = 0;
-                vec2 c = (of_mapToComplex(of_dimensions, gl_FragCoord.xy, of_position)) / of_zoom, // Mapping the complex plane to the viewport
-                        z = c;
-                for(; i <= recursion && cpx_mag(z) <= 2. ; i++ ) z = cpx_pow(z, 2.) + c; // Actual iterative thing
-                fragColor =  i - 1 == recursion ? finalColor : .6 + .6 * cos( 6.3 *  (float((i - 1) % hueModulus) / float(hueModulus)) + colorPalette); // Deciding the final color
-            }
-            """;
-     */
-
-    // JULIA SET
-    private final String injectedShader = """
-            const vec4 colorPalette = -vec4(0,23,21,0); // Can be randomly generated for more fun!
-            const vec4 finalColor = vec4(.0); // Color applied to bounded values
-            const int hueModulus = 30;
-
-            void main() {
-                int recursion = 1000, // Default recursion
-                        i = 0;
-                vec2 c = vec2(0.37, .1),
-                        z = (of_mapToComplex(of_dimensions, gl_FragCoord.xy, of_position)) / of_zoom; // Mapping the complex plane to the viewport
-                for(; i <= recursion && cpx_mag(z) <= 2. ; i++ ) z = cpx_pow(z, 2.) + c; // Actual iterative thing
-                fragColor =  i - 1 == recursion ? finalColor : .6 + .6 * cos( 6.3 *  (float((i - 1) % hueModulus) / float(hueModulus)) + colorPalette); // Deciding the final color
-            }
-            """;
+    private boolean queueReloadInjected = false;
+    private String injectedShader;
 
 
     public MainFrame() {
@@ -113,6 +85,13 @@ public class MainFrame extends MouseAdapter implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
+        if(queueReloadInjected) {
+            destroyShaders(drawable);
+            linkShaders(drawable);
+            queueReloadInjected = false;
+        }
+
+
         float nTime = (System.currentTimeMillis() - initTimeMillis) / 1000f;
         float deltaTime = time - nTime;
         time = nTime;
@@ -153,7 +132,7 @@ public class MainFrame extends MouseAdapter implements GLEventListener {
 
     @Override
     public void init(GLAutoDrawable drawable) {
-        linkShaders(drawable);
+        reloadInjectedShader();
 
         initTimeMillis = System.currentTimeMillis();
 
@@ -190,6 +169,23 @@ public class MainFrame extends MouseAdapter implements GLEventListener {
         fs.defaultShaderCustomization(gl, true, true);
         sp.add(gl, fs, System.err);
         sp.link(gl, System.out);
+    }
+
+    private void destroyShaders(GLAutoDrawable drawable) {
+        final GL2 gl = drawable.getGL().getGL2();
+
+        if(sp.inUse()) sp.useProgram(gl, false);
+        sp.destroy(gl);
+    }
+
+    public void reloadInjectedShader() {
+        try {
+            injectedShader = Utils.loadFileAsString(new FileInputStream(OpenFractal.get().injectedShaderPath.toString()));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        queueReloadInjected = true;
     }
 
     private Vector2 getCursorPos() {
